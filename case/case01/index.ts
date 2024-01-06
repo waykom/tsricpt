@@ -1,6 +1,18 @@
 const url = 'http://rap2api.taobao.org/app/mock/315313/getName'
 const button: HTMLButtonElement | null = document.querySelector('.button')
+const btnDelete: HTMLButtonElement | null = document.querySelector('.btnDelete')
 const content: HTMLDivElement | null = document.querySelector('.content')
+
+
+btnDelete?.addEventListener<'click'>('click', (): void => {
+    const checkboxList: NodeListOf<HTMLInputElement> = document.querySelectorAll('.item input')
+
+    for (const node of checkboxList) {
+        if (node.checked) {
+            node.parentElement?.remove()
+        }
+    }
+})
 
 interface Thing {
     color: string
@@ -38,6 +50,8 @@ class WebDisplay {
         const name: HTMLDivElement = document.createElement('div')
         const ip: HTMLDivElement = document.createElement('div')
 
+
+
         color.innerText = someThing.color
         uid.innerText = someThing.uid
         name.innerText = someThing.name
@@ -49,6 +63,11 @@ class WebDisplay {
         rowItem.appendChild(uid)
         rowItem.appendChild(name)
         rowItem.appendChild(ip)
+
+        const input: HTMLInputElement = document.createElement('input')
+        input.setAttribute('type', 'checkbox')
+
+        rowItem.appendChild(input)
     }
 }
 
@@ -69,10 +88,12 @@ async function getData(): Promise<void> {
         } else {
             message = String(error)
         }
-        console.log(error)
+        console.log(message)
     }
 }
 
 getData()
 
 button?.addEventListener<'click'>('click', getData)
+
+

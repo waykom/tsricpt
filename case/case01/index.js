@@ -10,7 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const url = 'http://rap2api.taobao.org/app/mock/315313/getName';
 const button = document.querySelector('.button');
+const btnDelete = document.querySelector('.btnDelete');
 const content = document.querySelector('.content');
+btnDelete === null || btnDelete === void 0 ? void 0 : btnDelete.addEventListener('click', () => {
+    var _a;
+    const checkboxList = document.querySelectorAll('.item input');
+    for (const node of checkboxList) {
+        if (node.checked) {
+            (_a = node.parentElement) === null || _a === void 0 ? void 0 : _a.remove();
+        }
+    }
+});
 class SomeThing {
     constructor(color, uid, name, ip) {
         this.color = color;
@@ -38,6 +48,9 @@ class WebDisplay {
         rowItem.appendChild(uid);
         rowItem.appendChild(name);
         rowItem.appendChild(ip);
+        const input = document.createElement('input');
+        input.setAttribute('type', 'checkbox');
+        rowItem.appendChild(input);
     }
 }
 function getJSON(url) {
@@ -61,7 +74,7 @@ function getData() {
             else {
                 message = String(error);
             }
-            console.log(error);
+            console.log(message);
         }
     });
 }
