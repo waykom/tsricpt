@@ -1,41 +1,78 @@
-const button:HTMLButtonElement | null = document.querySelector('.button')
-const content = document.querySelector('.content')
+const url = 'http://rap2api.taobao.org/app/mock/315313/getName'
+const button: HTMLButtonElement | null = document.querySelector('.button')
+const content: HTMLDivElement | null = document.querySelector('.content')
 
-button?.addEventListener('click', addItem)
-
-addItem()
-
-function addItem() {
-    const item = document.createElement('div')
-    item.className = 'item'
-
-    content?.appendChild(item)
-
-    const color = document.createElement('div')
-    const uid = document.createElement('div')
-    const name = document.createElement('div')
-    const ip = document.createElement('div')
-
-    requestAPI()
-        .then(data => {
-
-            color.innerText = data.color
-            uid.innerText = data.uid
-            name.innerText = data.name
-            ip.innerText = data.ip
-
-            color.style.backgroundColor = color.innerText
-        })
-        .then(_ => {
-            item.appendChild(color)
-            item.appendChild(uid)
-            item.appendChild(name)
-            item.appendChild(ip)
-        })
-
+interface Thing {
+    color: string
+    uid: string
+    name: string
+    ip: string
 }
 
-function requestAPI() {
-    const url:string = 'http://rap2api.taobao.org/app/mock/315313/getName'
-    return fetch(url).then(response => response.json())
+class SomeThing implements Thing {
+
+    color: string
+    uid: string
+    name: string
+    ip: string
+
+    constructor(color: string, uid: string, name: string, ip: string) {
+        this.color = color
+        this.uid = uid
+        this.name = name
+        this.ip = ip
+    }
 }
+
+class WebDisplay {
+    public static addData(data: Thing): void {
+        const someThing: Thing = new SomeThing(data.color, data.uid, data.name, data.ip)
+
+        const rowItem: HTMLDivElement = document.createElement('div')
+        rowItem.className = 'item'
+
+        content?.appendChild(rowItem)
+
+        const color: HTMLDivElement = document.createElement('div')
+        const uid: HTMLDivElement = document.createElement('div')
+        const name: HTMLDivElement = document.createElement('div')
+        const ip: HTMLDivElement = document.createElement('div')
+
+        color.innerText = someThing.color
+        uid.innerText = someThing.uid
+        name.innerText = someThing.name
+        ip.innerText = someThing.ip
+
+        color.style.backgroundColor = color.innerText
+
+        rowItem.appendChild(color)
+        rowItem.appendChild(uid)
+        rowItem.appendChild(name)
+        rowItem.appendChild(ip)
+    }
+}
+
+async function getJSON<T>(url: string): Promise<T> {
+    const response: Response = await fetch(url)
+    const json: Promise<T> = await response.json()
+    return json
+}
+
+async function getData(): Promise<void> {
+    try {
+        const data: Thing = await getJSON<Thing>(url)
+        WebDisplay.addData(data)
+    } catch (error: Error | unknown) {
+        let message: string
+        if (error instanceof Error) {
+            message = error.message
+        } else {
+            message = String(error)
+        }
+        console.log(error)
+    }
+}
+
+getData()
+
+button?.addEventListener<'click'>('click', getData)
